@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
+import MonthSelectorPopup from "./MonthSelectorPopup";
 
 const CarouselWrapper = styled.div`
   display: flex;
@@ -115,6 +116,7 @@ export default function CalendarCarousel({
   week,
   onIncreaseWeek,
   onDecreaseWeek,
+  onClickMonth,
 }) {
   const weekDays = week.map(({ name, timeStamp, day }) => {
     const weekDate = new Date(timeStamp);
@@ -156,7 +158,12 @@ export default function CalendarCarousel({
         />
         <CarouselMonth>
           <ArrowButton onClick={onDecreaseWeek}>&#5176;</ArrowButton>
-          <div>
+          <div
+            onClick={() => {
+              onClickMonth();
+            }}
+            style={{ cursor: "pointer" }}
+          >
             {monthName} {year}
           </div>
 

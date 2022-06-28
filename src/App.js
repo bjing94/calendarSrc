@@ -4,6 +4,7 @@ import CalendarCarousel from "./components/CalendarCarousel";
 import CalendarTimeline from "./components/CalendarTimeline";
 import CalendarBottom from "./components/CalendarBottom";
 import { useEffect, useState } from "react";
+import MonthSelectorPopup from "./components/MonthSelectorPopup";
 
 const AppWrapper = styled.div`
   display: flex;
@@ -27,9 +28,13 @@ function App() {
   ]);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [viewDate, setViewDate] = useState(new Date());
-  const [browsingDate, setBrowsingDate] = useState(new Date()); // to show current date
+  const [browsingDate, setBrowsingDate] = useState(
+    new Date(new Date() - (new Date().getDay() - 1) * dayDuration)
+  );
 
   const [selectedEvent, setSelectedEvent] = useState(null);
+
+  const [showMonthPopup, setShowMonthPopup] = useState(false);
 
   const handleAddEventToday = () => {
     const result = prompt("Adding event for today. Enter event time: HH:mm:ss");
@@ -53,13 +58,14 @@ function App() {
   };
   const handleDeleteEvent = (deletedEvent) => {
     const newEvents = events.filter((event) => event !== deletedEvent);
-    console.log(newEvents);
     setEvents(newEvents);
     setSelectedEvent(null);
   };
+
   function calculateWeek() {
     const firstDayOfWeek =
       browsingDate - (browsingDate.getDay() - 1) * dayDuration;
+
     let newWeek = [];
     for (let i = 0; i < 7; i++) {
       const date = new Date(firstDayOfWeek + dayDuration * i);
@@ -104,6 +110,7 @@ function App() {
         timeStamp: date.getTime(),
       });
     }
+
     setWeek(newWeek);
   }
   const handleIncreaseWeek = () => {
@@ -127,6 +134,7 @@ function App() {
   if (week.length === 0) {
     return <div>loading</div>;
   }
+
   return (
     <AppWrapper>
       <AppContent>
@@ -139,25 +147,37 @@ function App() {
           onIncreaseWeek={handleIncreaseWeek}
           onDecreaseWeek={handleDecreaseWeek}
           onSetViewDate={setViewDate}
+          onClickMonth={() => {
+            setShowMonthPopup(true);
+          }}
         />
         <CalendarTimeline
           week={week}
           weekEvents={events}
           selectedEvent={selectedEvent}
           onSelectEvent={(time) => {
-            console.log("selected", time);
             setSelectedEvent(time);
           }}
         />
         <CalendarBottom
           selectedEvent={selectedEvent}
           onDeleteEvent={() => {
-            console.log("deleting event:", selectedEvent);
             handleDeleteEvent(selectedEvent);
           }}
           onAddToday={handleAddEventToday}
         />
       </AppContent>
+      {showMonthPopup && (
+        <MonthSelectorPopup
+          browsingDate={browsingDate}
+          onClose={() => {
+            setShowMonthPopup(false);
+          }}
+          onSetBrowsingDate={(date) => {
+            setBrowsingDate(date);
+          }}
+        />
+      )}
     </AppWrapper>
   );
 }
