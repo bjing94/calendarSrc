@@ -128,6 +128,7 @@ function App() {
 
   useEffect(() => {
     calculateWeek();
+    setSelectedEvent(null);
   }, [browsingDate]);
 
   const [week, setWeek] = useState([]);

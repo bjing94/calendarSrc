@@ -127,6 +127,8 @@ export default function CalendarTimeline({
           onSelectEvent={() => {
             if (hasEvent) {
               onSelectEvent(eventTime);
+            } else {
+              onSelectEvent(null);
             }
           }}
         />
